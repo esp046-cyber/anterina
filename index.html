@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy 67th Birthday, Auntie!</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #faf9f7;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 16px;
+  }
+  .bday-wrap {
+    text-align: center;
+    padding: 24px 16px;
+    position: relative;
+    overflow: hidden;
+    max-width: 520px;
+    width: 100%;
+  }
+  .bday-headline {
+    font-size: 32px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .bday-sub {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  .bday-cake {
+    width: 140px;
+    height: 100px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  .cake-body {
+    width: 120px;
+    height: 56px;
+    background: #f5e6d3;
+    border: 1.5px solid #d4a574;
+    border-radius: 8px 8px 12px 12px;
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+  }
+  .cake-top {
+    width: 120px;
+    height: 14px;
+    background: #e8c9a8;
+    border: 1.5px solid #d4a574;
+    border-radius: 60px 60px 8px 8px;
+    position: absolute;
+    bottom: 62px;
+    left: 10px;
+  }
+  .cake-drip {
+    position: absolute;
+    bottom: 56px;
+    width: 120px;
+    left: 10px;
+    display: flex;
+    justify-content: space-around;
+  }
+  .drip {
+    width: 10px;
+    height: 14px;
+    background: #e8c9a8;
+    border-radius: 0 0 6px 6px;
+    border-left: 1.5px solid #d4a574;
+    border-right: 1.5px solid #d4a574;
+    border-bottom: 1.5px solid #d4a574;
+  }
+  .candle {
+    position: absolute;
+    bottom: 76px;
+    width: 4px;
+    height: 18px;
+    background: #888;
+    border-radius: 2px;
+  }
+  .candle::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -2px;
+    width: 8px;
+    height: 10px;
+    background: radial-gradient(ellipse at center, #ff9500 0%, transparent 70%);
+    border-radius: 50% 50% 40% 40%;
+    animation: flicker 0.8s ease-in-out infinite alternate;
+  }
+  @keyframes flicker {
+    0% { transform: scale(1) translateY(0); opacity: 0.9; }
+    100% { transform: scale(1.15) translateY(-1px); opacity: 1; }
+  }
+  .play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    background: #1a1a1a;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.15s ease-out, opacity 0.15s;
+    margin-bottom: 20px;
+  }
+  .play-btn:hover { transform: scale(1.03); }
+  .play-btn:active { transform: scale(0.98); }
+  .play-btn.playing { background: #666; }
+  .message-card {
+    max-width: 420px;
+    margin: 0 auto 16px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    text-align: left;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .message-card p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #444;
+  }
+  .message-card .from {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #999;
+    text-align: right;
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 320px;
+    margin: 0 auto 16px;
+  }
+  .photo-slot {
+    aspect-ratio: 1;
+    background: #f0f0f0;
+    border: 1.5px dashed #ccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  .photo-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+  }
+  .photo-slot .placeholder-text {
+    position: absolute;
+    pointer-events: none;
+  }
+  .balloon {
+    position: absolute;
+    width: 28px;
+    height: 36px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    width: 1px;
+    height: 14px;
+    background: #bbb;
+    transform: translateX(-50%);
+  }
+  .balloon.r { background: #e74c3c; }
+  .balloon.g { background: #2ecc71; }
+  .balloon.p { background: #9b59b6; }
+  .balloon.b { background: #3498db; }
+  .balloon.y { background: #f1c40f; }
+  .music-note {
+    position: absolute;
+    font-size: 20px;
+    color: #1a1a1a;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    font-weight: 500;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.85; }
+    100% { transform: translateY(-280px) rotate(20deg); opacity: 0; }
+  }
+  @keyframes noteFloat {
+    0% { transform: translateY(0) translateX(0); opacity: 0.9; }
+    100% { transform: translateY(-200px) translateX(30px); opacity: 0; }
+  }
+  .age-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: #fff8e1;
+    color: #1a1a1a;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    border: 1px solid #ffe082;
+  }
+  .wish-input {
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+  }
+  .wish-input input {
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+    color: #1a1a1a;
+    outline: none;
+  }
+  .wish-input input:focus { border-color: #1a1a1a; }
+  .wish-input button {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    background: #1a1a1a;
+    color: #fff;
+    cursor: pointer;
+  }
+  .wishes-list {
+    max-width: 420px;
+    margin: 12px auto 0;
+    text-align: left;
+  }
+  .wish-item {
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #444;
+    border-left: 3px solid #3498db;
+  }
+  .section-label {
+    font-size: 14px;
+    color: #999;
+    margin: 16px 0 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a1a; color: #f0f0f0; }
+    .bday-headline { color: #f0f0f0; }
+    .bday-sub { color: #aaa; }
+    .message-card { background: #2a2a2a; border-color: #444; }
+    .message-card p { color: #ccc; }
+    .message-card .from { color: #888; }
+    .photo-slot { background: #2a2a2a; border-color: #555; color: #666; }
+    .wish-input input { background: #2a2a2a; border-color: #444; color: #f0f0f0; }
+    .wish-item { background: #2a2a2a; color: #ccc; }
+    .age-badge { background: #3a3000; border-color: #665500; color: #f0f0f0; }
+    .cake-body { background: #5a4a3a; border-color: #8a7a6a; }
+    .cake-top { background: #6a5a4a; border-color: #8a7a6a; }
+    .drip { background: #6a5a4a; border-color: #8a7a6a; }
+  }
+</style>
+</head>
+<body>
+
+<!-- AUDIO: Replace the src below with your GitHub raw MP3 URL -->
+<!-- Example: https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/birthday-song.mp3 -->
+<audio id="bdayAudio" preload="none">
+  <source src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/birthday-song.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<div class="bday-wrap" id="bdayWrap">
+  <div class="age-badge">67 & Fabulous</div>
+  <div class="bday-headline">Happy 67th Birthday, Auntie!</div>
+  <div class="bday-sub">A special day for a very special lady</div>
+
+  <div class="bday-cake">
+    <div class="cake-body"></div>
+    <div class="cake-top"></div>
+    <div class="cake-drip">
+      <div class="drip"></div>
+      <div class="drip"></div>
+      <div class="drip"></div>
+      <div class="drip"></div>
+      <div class="drip"></div>
+    </div>
+    <div class="candle" style="left: 22px;"></div>
+    <div class="candle" style="left: 42px;"></div>
+    <div class="candle" style="left: 62px;"></div>
+    <div class="candle" style="left: 82px;"></div>
+    <div class="candle" style="left: 102px;"></div>
+  </div>
+
+  <button class="play-btn" id="playBtn" onclick="toggleSong()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex-shrink:0">
+      <path d="M7.76253 3.10547C8.25778 3.10552 8.74424 3.23849 9.17073 3.49023L19.533 9.60742C20.8536 10.3869 21.2923 12.0901 20.5174 13.4121C20.2785 13.8195 19.9398 14.1604 19.533 14.4004L9.16975 20.5156C7.84722 21.2958 6.14596 20.8511 5.36995 19.5273C5.11962 19.1003 4.9872 18.6142 4.98714 18.1191V5.88672C4.98717 4.3537 6.22731 3.10547 7.76253 3.10547ZM6.78792 18.1191C6.78798 18.2945 6.83431 18.4664 6.92268 18.6172C7.19639 19.0841 7.79338 19.2377 8.25569 18.9648L18.618 12.8496C18.7607 12.7654 18.8803 12.6458 18.9647 12.502C19.2393 12.0334 19.082 11.4311 18.618 11.1572L8.25569 5.04102C8.10612 4.95273 7.93564 4.9063 7.76253 4.90625C7.22705 4.90625 6.78795 5.34218 6.78792 5.88672V18.1191Z" fill="currentColor"/>
+    </svg>
+    <span id="btnText">Play birthday song</span>
+  </button>
+
+  <div class="message-card">
+    <p>Dear Auntie, you have been such a wonderful part of our lives for 67 beautiful years. Thank you for your kindness, your laughter, and all the love you have given us. Wishing you a very happy birthday this Monday and many more years of health and joy. We love you!</p>
+    <div class="from">— With love, from your family</div>
+  </div>
+
+  <div class="message-card">
+    <p>Auntie, you always make the best food and give the best advice. Every family gathering is brighter because you are there. Happy 67th birthday!</p>
+    <div class="from">— From your nephew</div>
+  </div>
+
+  <div class="section-label">Photo memories</div>
+  <div class="photo-grid">
+    <div class="photo-slot">
+      <img src="photo1.jpg" alt="Auntie" onerror="this.style.display='none'; this.parentElement.querySelector('.placeholder-text').style.display='block';">
+      <span class="placeholder-text">Photo 1</span>
+    </div>
+    <div class="photo-slot">
+      <img src="photo2.jpg" alt="Auntie" onerror="this.style.display='none'; this.parentElement.querySelector('.placeholder-text').style.display='block';">
+      <span class="placeholder-text">Photo 2</span>
+    </div>
+    <div class="photo-slot">
+      <img src="photo3.jpg" alt="Auntie" onerror="this.style.display='none'; this.parentElement.querySelector('.placeholder-text').style.display='block';">
+      <span class="placeholder-text">Photo 3</span>
+    </div>
+    <div class="photo-slot">
+      <img src="photo4.jpg" alt="Auntie" onerror="this.style.display='none'; this.parentElement.querySelector('.placeholder-text').style.display='block';">
+      <span class="placeholder-text">Photo 4</span>
+    </div>
+    <div class="photo-slot">
+      <img src="photo5.jpg" alt="Auntie" onerror="this.style.display='none'; this.parentElement.querySelector('.placeholder-text').style.display='block';">
+      <span class="placeholder-text">Photo 5</span>
+    </div>
+    <div class="photo-slot">
+      <img src="photo6.jpg" alt="Auntie" onerror="this.style.display='none'; this.parentElement.querySelector('.placeholder-text').style.display='block';">
+      <span class="placeholder-text">Photo 6</span>
+    </div>
+  </div>
+
+  <div class="section-label">Leave a birthday wish</div>
+  <div class="wish-input">
+    <input type="text" id="wishInput" placeholder="Write your wish here..." maxlength="120">
+    <button onclick="addWish()">Send</button>
+  </div>
+  <div class="wishes-list" id="wishesList"></div>
+</div>
+
+<script>
+  const audio = document.getElementById('bdayAudio');
+  let isPlaying = false;
+
+  function spawnBalloons() {
+    const wrap = document.getElementById('bdayWrap');
+    const colors = ['r','g','p','b','y'];
+    for (let i = 0; i < 8; i++) {
+      setTimeout(() => {
+        const b = document.createElement('div');
+        b.className = 'balloon ' + colors[Math.floor(Math.random() * colors.length)];
+        b.style.left = (10 + Math.random() * 80) + '%';
+        b.style.bottom = '60px';
+        b.style.animation = `floatUp ${2.5 + Math.random() * 1.5}s linear forwards`;
+        wrap.appendChild(b);
+        setTimeout(() => b.remove(), 4500);
+      }, i * 200);
+    }
+  }
+
+  function spawnNotes() {
+    const wrap = document.getElementById('bdayWrap');
+    const notes = ['\u266a','\u266b','\u2669','\u266c'];
+    for (let i = 0; i < 6; i++) {
+      setTimeout(() => {
+        const n = document.createElement('div');
+        n.className = 'music-note';
+        n.textContent = notes[Math.floor(Math.random() * notes.length)];
+        n.style.left = (15 + Math.random() * 70) + '%';
+        n.style.bottom = '100px';
+        n.style.animation = `noteFloat ${2 + Math.random()}s ease-out forwards`;
+        wrap.appendChild(n);
+        setTimeout(() => n.remove(), 3500);
+      }, i * 300);
+    }
+  }
+
+  function toggleSong() {
+    if (isPlaying) {
+      audio.pause();
+      audio.currentTime = 0;
+      isPlaying = false;
+      document.getElementById('btnText').textContent = 'Play birthday song';
+      document.getElementById('playBtn').classList.remove('playing');
+      return;
+    }
+    isPlaying = true;
+    document.getElementById('btnText').textContent = 'Playing...';
+    document.getElementById('playBtn').classList.add('playing');
+    spawnBalloons();
+    spawnNotes();
+    audio.play().catch(err => {
+      console.log('Audio play failed:', err);
+      isPlaying = false;
+      document.getElementById('btnText').textContent = 'Play birthday song';
+      document.getElementById('playBtn').classList.remove('playing');
+    });
+  }
+
+  audio.addEventListener('ended', () => {
+    isPlaying = false;
+    document.getElementById('btnText').textContent = 'Play birthday song';
+    document.getElementById('playBtn').classList.remove('playing');
+  });
+
+  function addWish() {
+    const input = document.getElementById('wishInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const list = document.getElementById('wishesList');
+    const item = document.createElement('div');
+    item.className = 'wish-item';
+    item.textContent = text;
+    list.appendChild(item);
+    input.value = '';
+  }
+
+  document.getElementById('wishInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') addWish();
+  });
+</script>
+
+</body>
+</html>
