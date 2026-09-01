@@ -210,3 +210,37 @@ body {
   cursor: pointer;
   line-height: 1;
 }
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  font-size: 40px;
+  cursor: pointer;
+  padding: 10px 16px;
+  user-select: none;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+  line-height: 1;
+  transition: background 0.2s ease;
+}
+
+.lightbox-nav:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-prev {
+  left: 12px;
+}
+
+.lightbox-next {
+  right: 12px;
+}
+
+@media (max-width: 600px) {
+  .lightbox-nav {
+    font-size: 30px;
+    padding: 8px 12px;
+  }
+}
