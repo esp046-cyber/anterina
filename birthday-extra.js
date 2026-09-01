@@ -37,27 +37,68 @@
     };
   }
 
-  /* ---------- Photo lightbox: click a photo to enlarge ---------- */
+  /* ---------- Photo lightbox: click a photo to enlarge, with prev/next nav ---------- */
   function initLightbox() {
     // Build the overlay once
     const overlay = document.createElement('div');
     overlay.className = 'lightbox-overlay';
-    overlay.innerHTML = '<span class="lightbox-close">&times;</span><img src="" alt="Enlarged photo">';
+    overlay.innerHTML =
+      '<span class="lightbox-nav lightbox-prev">&#8249;</span>' +
+      '<img src="" alt="Enlarged photo">' +
+      '<span class="lightbox-nav lightbox-next">&#8250;</span>' +
+      '<span class="lightbox-close">&times;</span>';
     document.body.appendChild(overlay);
 
     const overlayImg = overlay.querySelector('img');
     const closeBtn = overlay.querySelector('.lightbox-close');
+    const prevBtn = overlay.querySelector('.lightbox-prev');
+    const nextBtn = overlay.querySelector('.lightbox-next');
+
+    // Collect all loaded, valid photos in order
+    let photoEls = [];
+    let currentIndex = 0;
+
+    function refreshPhotoList() {
+      photoEls = Array.prototype.slice.call(document.querySelectorAll('.photo-slot img'))
+        .filter(function (img) { return img.naturalWidth > 0; });
+    }
+
+    function showIndex(index) {
+      if (photoEls.length === 0) return;
+      currentIndex = (index + photoEls.length) % photoEls.length; // wrap around
+      overlayImg.src = photoEls[currentIndex].src;
+    }
+
+    function openLightbox(img) {
+      refreshPhotoList();
+      const idx = photoEls.indexOf(img);
+      showIndex(idx === -1 ? 0 : idx);
+      overlay.classList.add('active');
+    }
 
     function closeLightbox() {
       overlay.classList.remove('active');
     }
+
+    prevBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      showIndex(currentIndex - 1);
+    });
+
+    nextBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      showIndex(currentIndex + 1);
+    });
 
     overlay.addEventListener('click', function (e) {
       if (e.target === overlay || e.target === closeBtn) closeLightbox();
     });
 
     document.addEventListener('keydown', function (e) {
+      if (!overlay.classList.contains('active')) return;
       if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showIndex(currentIndex - 1);
+      if (e.key === 'ArrowRight') showIndex(currentIndex + 1);
     });
 
     // Attach click handlers to every photo slot's image
@@ -65,8 +106,7 @@
       img.addEventListener('click', function () {
         // Only open if the image actually loaded (not a broken placeholder)
         if (img.naturalWidth === 0) return;
-        overlayImg.src = img.src;
-        overlay.classList.add('active');
+        openLightbox(img);
       });
     });
   }
