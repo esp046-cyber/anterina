@@ -71,9 +71,23 @@
 
     function handleSend() {
       const wishText = wishInput.value.trim();
-      if (!wishText) return;
       const nameText = nameInput ? nameInput.value.trim() : '';
-      const displayName = nameText || 'Anonymous';
+
+      if (!nameText) {
+        if (nameInput) {
+          nameInput.style.borderColor = '#e0607a';
+          nameInput.placeholder = 'Please enter your name first';
+          nameInput.focus();
+        }
+        return;
+      }
+      if (!wishText) {
+        wishInput.style.borderColor = '#e0607a';
+        wishInput.focus();
+        return;
+      }
+
+      const displayName = nameText;
 
       // Show it immediately on the page
       renderWish({ name: displayName, wish: wishText });
@@ -103,7 +117,13 @@
       nameInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') handleSend();
       });
+      nameInput.addEventListener('input', function () {
+        nameInput.style.borderColor = '';
+      });
     }
+    wishInput.addEventListener('input', function () {
+      wishInput.style.borderColor = '';
+    });
   }
 
   function init() {
