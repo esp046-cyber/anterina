@@ -1,7 +1,7 @@
 /* ============================================
    birthday-wishes-sync.js
    Connects the wish box to a Google Sheet (via Apps Script Web App)
-   so wishes are saved permanently and shown to every visitor.
+   so wishes + names are saved permanently and shown to every visitor.
 
    Link this LAST, at the very end of <body>, after all other scripts:
    <script src="birthday-wishes-sync.js"></script>
@@ -14,13 +14,21 @@
 
   const list = document.getElementById('wishesList');
 
-  /* ---------- Render a single wish item (no animation, used for loaded history) ---------- */
-  function renderWish(text) {
+  /* ---------- Render a single {name, wish} item (used for loaded history) ---------- */
+  function renderWish(entry) {
     if (!list) return;
     const item = document.createElement('div');
     item.className = 'wish-item';
-    item.textContent = text;
+    const name = (entry && entry.name) ? entry.name : 'Anonymous';
+    const wish = (entry && entry.wish) ? entry.wish : '';
+    item.innerHTML = '<strong>' + escapeHtml(name) + ':</strong> ' + escapeHtml(wish);
     list.appendChild(item);
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
   /* ---------- Load all existing wishes from the Sheet on page open ---------- */
@@ -37,40 +45,70 @@
       });
   }
 
-  /* ---------- Send a new wish to the Sheet ---------- */
-  function saveWishToSheet(text) {
+  /* ---------- Send a new wish + name to the Sheet ---------- */
+  function saveWishToSheet(name, wish) {
     fetch(WISHES_API_URL, {
       method: 'POST',
-      mode: 'no-cors', // Apps Script doesn't return CORS headers for POST; we don't need to read the response
+      mode: 'no-cors',
       headers: {
-        'Content-Type': 'text/plain;charset=utf-8' // avoids a CORS preflight request
+        'Content-Type': 'text/plain;charset=utf-8'
       },
-      body: JSON.stringify({ wish: text })
+      body: JSON.stringify({ name: name, wish: wish })
     }).catch(function (err) {
       console.log('Could not save wish:', err);
     });
   }
 
-  /* ---------- Hook into the existing addWish() so new wishes also get saved ---------- */
-  function hookAddWish() {
-    const originalAddWish = window.addWish;
-    if (typeof originalAddWish !== 'function') return;
+  /* ---------- Fully handle the Send button: name + wish together ---------- */
+  function setupSendHandler() {
+    const sendBtn = document.querySelector('.wish-input button');
+    const wishInput = document.getElementById('wishInput');
+    const nameInput = document.getElementById('nameInput');
+    if (!sendBtn || !wishInput) return;
 
-    window.addWish = function () {
-      const input = document.getElementById('wishInput');
-      const text = input ? input.value.trim() : '';
+    // Replace the old inline onclick="addWish()" with our own handler
+    sendBtn.removeAttribute('onclick');
 
-      originalAddWish(); // still does the normal on-page display (+ heart pop, if that file is loaded)
+    function handleSend() {
+      const wishText = wishInput.value.trim();
+      if (!wishText) return;
+      const nameText = nameInput ? nameInput.value.trim() : '';
+      const displayName = nameText || 'Anonymous';
 
-      if (text) {
-        saveWishToSheet(text);
+      // Show it immediately on the page
+      renderWish({ name: displayName, wish: wishText });
+
+      // Trigger heart-pop animation if that file is loaded
+      if (list && list.lastElementChild) {
+        const heart = document.createElement('span');
+        heart.className = 'heart-pop';
+        heart.textContent = '♥';
+        list.lastElementChild.appendChild(heart);
+        setTimeout(function () { heart.remove(); }, 1500);
       }
-    };
+
+      // Save permanently to the Sheet
+      saveWishToSheet(displayName, wishText);
+
+      // Clear inputs
+      wishInput.value = '';
+      if (nameInput) nameInput.value = '';
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    wishInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') handleSend();
+    });
+    if (nameInput) {
+      nameInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') handleSend();
+      });
+    }
   }
 
   function init() {
     loadWishes();
-    hookAddWish();
+    setupSendHandler();
   }
 
   if (document.readyState === 'loading') {
