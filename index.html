@@ -376,10 +376,13 @@
   </div>
 
   <div class="section-label">Leave a birthday wish</div>
-  <div class="wish-input">
-    <input type="text" id="wishInput" placeholder="Write your wish here..." maxlength="120">
-    <button onclick="addWish()">Send</button>
-  </div>
+<div class="wish-input" style="flex-direction: column; gap: 8px;">
+    <input type="text" id="nameInput" placeholder="Your name or nickname" maxlength="40">
+    <div style="display: flex; gap: 8px;">
+      <input type="text" id="wishInput" placeholder="Write your wish here..." maxlength="120">
+      <button onclick="addWish()">Send</button>
+    </div>
+</div>
   <div class="wishes-list" id="wishesList"></div>
 </div>
 
