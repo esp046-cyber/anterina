@@ -1,0 +1,212 @@
+/* ============================================
+   birthday-extra.css
+   Elegant enhancements for the 67th birthday page
+   Link this AFTER your existing <style> block, e.g.:
+   <link rel="stylesheet" href="birthday-extra.css">
+   ============================================ */
+
+/* Elegant serif font for the headline */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap');
+
+body {
+  background: linear-gradient(160deg, #fdf6ec 0%, #f7ece0 50%, #fdf6ec 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(160deg, #1c1712 0%, #241d16 50%, #1c1712 100%);
+  }
+}
+
+/* Card gets a soft gold border + glow */
+.bday-wrap {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid #e8c98f;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(200, 160, 90, 0.18);
+  backdrop-filter: blur(2px);
+  animation: cardFadeIn 0.9s ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  .bday-wrap {
+    background: rgba(40, 34, 26, 0.55);
+    border-color: #7a5f2e;
+  }
+}
+
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Headline in elegant serif with gold accent */
+.bday-headline {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 34px;
+  background: linear-gradient(90deg, #b8860b, #d4a574, #b8860b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fadeSlideIn 0.9s ease-out 0.1s both;
+}
+
+.bday-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  animation: fadeSlideIn 0.9s ease-out 0.25s both;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Age badge, gold styling */
+.age-badge {
+  background: linear-gradient(90deg, #fff3d6, #f9e3b0);
+  border: 1px solid #d4a574;
+  color: #6b4c1e;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  animation: fadeSlideIn 0.9s ease-out 0.35s both;
+}
+
+@media (prefers-color-scheme: dark) {
+  .age-badge {
+    background: linear-gradient(90deg, #3a2d12, #4a3a18);
+    color: #f0dcae;
+    border-color: #8a6a2e;
+  }
+}
+
+/* Photos: soft gold "polaroid" frame + hover lift */
+.photo-slot {
+  border: none;
+  background: #fff;
+  padding: 4px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(150, 110, 40, 0.18);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.photo-slot:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(150, 110, 40, 0.28);
+  cursor: pointer;
+}
+
+.photo-slot img {
+  border-radius: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .photo-slot { background: #2a2216; }
+}
+
+/* Section labels in elegant serif */
+.section-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-style: italic;
+  color: #a17e3e;
+}
+
+/* Play button, warm gold gradient */
+.play-btn {
+  background: linear-gradient(90deg, #c9974a, #b8860b);
+  box-shadow: 0 4px 14px rgba(184, 134, 11, 0.35);
+}
+
+.play-btn:hover {
+  background: linear-gradient(90deg, #d9a95a, #c9974a);
+}
+
+.play-btn.playing {
+  background: linear-gradient(90deg, #8a6a2e, #6b4c1e);
+}
+
+/* Message cards, cream tone with gold left border */
+.message-card {
+  background: #fffaf0;
+  border: 1px solid #edd9ab;
+  border-left: 4px solid #d4a574;
+}
+
+@media (prefers-color-scheme: dark) {
+  .message-card {
+    background: #241d14;
+    border-color: #5a4a2e;
+    border-left-color: #b8860b;
+  }
+}
+
+/* Wish items, gold accent instead of blue */
+.wish-item {
+  border-left: 3px solid #d4a574;
+  background: #fffaf0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .wish-item { background: #241d14; }
+}
+
+.wish-input button {
+  background: linear-gradient(90deg, #c9974a, #b8860b);
+}
+
+/* Sparkle particles (used by birthday-extra.js) */
+.sparkle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  font-size: 16px;
+  color: #d4a574;
+  opacity: 0;
+}
+
+@keyframes sparkleFloat {
+  0%   { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 0; }
+  15%  { opacity: 1; }
+  100% { transform: translateY(-260px) scale(1.1) rotate(90deg); opacity: 0; }
+}
+
+/* Lightbox for enlarged photo view (used by birthday-extra.js) */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 15, 8, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.lightbox-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 10px;
+  border: 4px solid #fff;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 28px;
+  color: #fff;
+  font-size: 32px;
+  cursor: pointer;
+  line-height: 1;
+}
